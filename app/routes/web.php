@@ -7,7 +7,7 @@ Auth::routes();
 
 // メインページのルート
 Route::get('/', [DisplayController::class, 'index'])->middleware('auth');  // 認証が必要なメインページ
-Route::get('/main', [DisplayController::class, 'index'])->middleware('auth');  // メインページも認証が必要
+Route::get('/main', [DisplayController::class, 'index'])->middleware('auth')->name('main'); 
 
 // マイページのルート
 Route::get('/mypage', [RegistrationController::class, 'showMypage'])->name('mypage')->middleware('auth');
@@ -48,4 +48,18 @@ Route::get('/liked_posts', [RegistrationController::class, 'likedPosts'])->name(
 
 // 検索
 Route::get('/search', [RegistrationController::class, 'search'])->name('search');
+// アカウント削除
+Route::delete('/user/delete', [RegistrationController::class, 'destroy'])->name('user.delete');
+
+Route::post('/register/confirm', [RegistrationController::class, 'showConfirmation'])->name('register.confirm');
+Route::post('/register/store', [RegistrationController::class, 'store'])->name('register.store');
+// 新規登録終わってログイン画面へ戻る
+Route::get('/signup/complete', function () {
+    return view('auth.signup_comp');  
+})->name('signup.complete');
+
+Route::get('/user_page/{id}', [RegistrationController::class, 'show'])->name('user.page');
+
+
+
 

@@ -12,10 +12,34 @@
                 </div>
             @endif
 
-            <!-- アカウント削除ボタン -->
-            <div class="text-end mb-4">
-                <button type="button" class="btn btn-danger">アカウントを削除</button>
+          <!-- 削除ボタン -->
+<div class="text-end mb-4">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">アカウントを削除</button>
+</div>
+
+<!-- 削除確認モーダル -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">アカウント削除確認</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                本当にアカウントを削除しますか？この操作は取り消せません。
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                <form action="{{ route('user.delete') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">削除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
             <!-- ユーザー情報編集フォーム -->
             <form action="{{ route('user.update') }}" method="POST">

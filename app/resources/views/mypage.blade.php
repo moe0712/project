@@ -34,6 +34,12 @@
                                 <p class="card-text">
                                     <small class="text-muted">投稿日時: {{ $post->created_at }}</small>
                                 </p>
+                                 <!-- 画像のサムネイルを右下に表示 -->
+                        @if ($post->image)
+                            <div style="float: right; width: 60px; height: 60px; margin-left: 10px; margin-bottom: 10px; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <img src="{{ asset('storage/' . $post->image) }}" style="width: 100%; height: 100%; object-fit: cover;" alt="投稿画像">
+                            </div>
+                        @endif
                             </div>
                         </div>
                     </a>

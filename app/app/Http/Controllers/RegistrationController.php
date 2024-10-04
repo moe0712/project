@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Report;
 use App\Like;
 use App\Comment;
+use App\User; // ユーザーモデルのインポート
+use Illuminate\Support\Facades\Hash; // Hashクラスのインポート
+
+
+
 
 
 class RegistrationController extends Controller
@@ -238,6 +243,9 @@ public function search(Request $request)
     // 検索クエリを組み立てる
     $query = Post::query();
 
+    // 削除フラグが1のものは表示しない
+    $query->where('del_flag', '!=', 1);
+
     // ユーザー名で検索する
     if ($userQuery) {
         $query->whereHas('user', function($q) use ($userQuery) {
@@ -270,7 +278,73 @@ public function search(Request $request)
 
 
 
+public function destroy(Request $request)
+{
+    $user = Auth::user();
 
+    // ユーザーの del_fig を 1 に更新（論理削除）
+    $user->del_fig = 1;
+    $user->save();
+
+    // ログアウト処理
+    Auth::logout();
+
+    // ホームページにリダイレクト
+    return redirect('/')->with('success', 'アカウントが削除されました。');
+}
+
+
+public function showConfirmation(Request $request)
+{
+    // バリデーション
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'password' => 'required|string|confirmed|min:8',
+    ]);
+
+    // フォームデータをセッションに保存
+    $request->session()->put('register_data', $request->all());
+
+    // 確認画面を表示
+    return view('auth.register_confirm', ['data' => $request->all()]);
+}
+
+public function store(Request $request)
+{
+    // セッションからデータを取得
+    $data = $request->session()->get('register_data');
+
+    // ユーザーを作成
+    $user = User::create([
+        'name' => $data['name'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+    ]);
+
+    // セッションをクリア
+    $request->session()->forget('register_data');
+
+    // ログイン処理
+    Auth::login($user);
+
+    // サインアップ完了ページにリダイレクト
+    return redirect()->route('signup.complete')->with('success', '登録が完了しました！');
+}
+
+public function show($id) {
+    // IDでユーザーを取得
+    $user = User::findOrFail($id);
+    
+    // デルフラグが1でない投稿を新しい順に取得
+    $posts = Post::where('user_id', $id)
+                 ->where('del_flag', '!=', 1) // デルフラグが1ではない投稿
+                 ->orderBy('created_at', 'desc') // 新しい順に並べる
+                 ->get();
+
+    // ユーザーと投稿データをビューに渡す
+    return view('user_page', compact('user', 'posts'));
+}
 
 
 

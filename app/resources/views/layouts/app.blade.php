@@ -84,12 +84,13 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('ログイン') }}</a>
                             </li>
                             @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
+                            <li class="nav-item">
+    <a class="nav-link" href="{{ route('register') }}">{{ __('新規登録') }}</a>
+</li>
+
                             @endif
                         @else
                             <li class="nav-item dropdown">
@@ -121,22 +122,24 @@
         </main>
     </div>
 
-    <!-- フッター -->
-    <footer class="bg-light py-3 mt-auto fixed-bottom">
-        <div class="container">
-            <div class="d-flex justify-content-around">
-                <a href="{{ url('/main') }}" class="footer-btn">
-                    <span class="material-icons-round">home</span>
-                </a>
-                <a href="{{ url('/post_episode') }}" class="footer-btn">
-                    <span class="material-icons-round">add_circle</span>
-                </a>
-                <a href="{{ url('/mypage') }}" class="footer-btn">
-                    <span class="material-icons-round">person</span>
-                </a>
-            </div>
+    @if (!in_array(Request::path(), ['login', 'register', 'password/reset', 'verify', 'password/email']))
+<footer class="bg-light py-3 mt-auto fixed-bottom">
+    <div class="container">
+        <div class="d-flex justify-content-around">
+            <a href="{{ url('/main') }}" class="footer-btn">
+                <span class="material-icons-round">home</span>
+            </a>
+            <a href="{{ url('/post_episode') }}" class="footer-btn">
+                <span class="material-icons-round">add_circle</span>
+            </a>
+            <a href="{{ url('/mypage') }}" class="footer-btn">
+                <span class="material-icons-round">person</span>
+            </a>
         </div>
-    </footer>
+    </div>
+</footer>
+@endif
+
     @stack('scripts')
 
     <!-- BootstrapのJSと依存関係 -->

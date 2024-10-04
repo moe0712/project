@@ -1,50 +1,71 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>投稿詳細</title>
-    <!-- BootstrapのCSSを読み込み -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
+        /* 基本設定 */
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow-x: hidden; /* 横スクロールを防止 */
+        }
 
-.footer-btn {
-        display: flex;
-        align-items: center;
-        font-size: 1.5rem;
-        color: #595757;
-        text-decoration: none;
-    }
+        /* 全体をフレックスボックスで配置 */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-    .footer-btn i,
-    .footer-btn span {
-        font-size: 40px;
-        margin-right: 8px;
-    }
+        .content {
+            flex: 1;
+            padding-bottom: 60px; /* フッターの高さ分の余白を追加 */
+        }
 
-    .footer-btn:hover {
-        color: #898989;
-    }
-        /* カードを中央に配置 */
+        .footer {
+            height: 60px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .footer-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #595757;
+            text-decoration: none;
+        }
+
+        .footer-btn i, .footer-btn span {
+            font-size: 40px;  
+            margin-right: 8px;
+        }
+
+        .footer-btn:hover {
+            color: #898989;
+        }
+
         .center-card {
             max-width: 600px;
             margin: 0 auto;
-            position: relative;
-            margin-top: 100px;
+            margin-top: 20px;
         }
 
-        /* 削除ボタンをカード内右上に配置 */
-        .delete-btn {
+        .report-btn {
             position: absolute;
             top: 10px;
             right: 10px;
         }
 
-        /* カードの高さを調整 */
         .card {
-            min-height: 200px;
+            min-height: auto; /* カードの高さを自動に調整 */
         }
 
         .like-comment {
@@ -54,30 +75,33 @@
 
         .like-comment i {
             margin-right: 5px;
+        }
+
+        .favorite-icon {
+            color: grey; 
+        }
+
+        .favorite-icon.active {
+            color: red; 
+        }
+
+        .like-count, .like-count a {
+            text-decoration: none !important;
+            color: inherit !important;
+        }
+
+        button, .btn-link {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0;
+            color: inherit;
+            text-decoration: none !important;
             cursor: pointer;
         }
 
-        /* ヘッダーの投稿詳細を中央に配置 */
-        .header-content {
-            position: relative;
-            text-align: center;
-        }
-
-        /* 左端に戻るボタンを配置 */
-        .back-btn {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .header-title {
-            margin: 0;
-        }
-
-        /* コメントセクションのスタイル */
         .comment-section {
-            display: none;  /* 初期状態では非表示 */
+            display: none;
             margin-top: 10px;
         }
 
@@ -85,136 +109,116 @@
             border-bottom: 1px solid #ddd;
             padding: 5px 0;
         }
+
     </style>
 </head>
-
 <body>
-    <!-- ヘッダー -->
-    <header class="bg-light p-3 border-bottom mb-4">
-        <div class="container header-content">
-            <a href="javascript:history.back()" class="btn btn-outline-secondary back-btn">戻る</a>
-            <h2 class="header-title">投稿詳細</h2>
-        </div>
-    </header>
 
-    <div class="container">
-        <!-- 投稿詳細を中央に配置 -->
-        <div class="card mb-4 center-card">
-            <div class="card-body">
-                <!-- 削除ボタンをカード内右上に配置 -->
-                <button type="button" class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    削除
-                </button>
-                <p><strong>{{ $post->user->name }}</strong></p> 
-                <h3>{{ $post->title }}</h3>
-                <p>{{ $post->episode }}</p>
-                <p class="text-muted">{{ $post->created_at->format('Y/m/d') }}</p>
-                
+    <div class="wrapper">
+        <!-- ヘッダー -->
+        <header class="bg-light p-3 border-bottom mb-4">
+            <div class="container d-flex justify-content-between align-items-center">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary back-btn">戻る</a>
+                <h2 class="header-title mx-auto text-center">投稿詳細</h2>
+            </div>
+        </header>
 
-                <!-- 画像表示 -->
-                @if ($post->image)
-                    <div class="mb-3">
-                        <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid" alt="投稿画像">
+        <div class="content container">
+            <!-- 投稿の詳細ページ -->
+            <div class="card center-card">
+                <div class="card-body">
+                <p>
+    <strong>
+        @if (Auth::id() == $post->user->id)
+            <a href="{{ url('/mypage') }}">{{ $post->user->name }}</a> <!-- 自分のマイページ -->
+        @else
+            <a href="{{ url('/user_page', $post->user->id) }}">{{ $post->user->name }}</a> <!-- 他のユーザーのページ -->
+        @endif
+    </strong>
+</p>
+
+
+                    <h3>{{ $post->title }}</h3>
+                    <p>{{ $post->episode }}</p>
+                    <p class="text-muted">{{ $post->created_at->format('Y/m/d') }}</p>
+
+                    <!-- 画像があれば表示 -->
+                    @if ($post->image)
+                        <div class="mb-3">
+                            <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid" style="max-width: 100%; height: auto;" alt="投稿画像">
+                        </div>
+                    @endif
+
+                    <!-- いいね機能 -->
+                    <div class="like-comment mt-3">
+                        @if (Auth::check())
+                            <form action="{{ route('like.store', $post) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-link p-0">
+                                    <i class="material-icons-round favorite-icon {{ $post->likes->contains('user_id', Auth::id()) ? 'active' : '' }}">
+                                        {{ $post->likes->contains('user_id', Auth::id()) ? 'favorite' : 'favorite_border' }}
+                                    </i>
+                                    <!-- いいねのカウント表示 -->
+                                    <span class="like-count">{{ $post->likes->count() }}</span>
+                                </button>
+                            </form>
+                        @endif
+
+                        <!-- コメントアイコン -->
+                        <button type="button" class="btn btn-link p-0 ms-4" onclick="toggleCommentSection({{ $post->id }})">
+                            <i class="material-icons-round">chat_bubble_outline</i>
+                            <span class="comment-count">{{ $post->comments->count() }}</span>
+                        </button>
                     </div>
-                @endif
 
-                <!-- いいね＆コメント -->
-                <div class="like-comment mt-3">
-                    <!-- いいねアイコン：クリックでいいねしたユーザーを表示するモーダルを開く -->
-                    <i class="material-icons-round" data-bs-toggle="modal" data-bs-target="#likeModal">favorite_border</i> 
-                    <span>{{ $post->likes->count() }}</span>
-
-                    <!-- コメントアイコン：クリックでコメントをトグル表示 -->
-                    <i class="material-icons-round ms-4" onclick="toggleCommentSection()">chat_bubble_outline</i> 
-                    <span>{{ $post->comments->count() }}</span>
-                </div>
-
-                <!-- コメントセクション -->
-                <div id="comment-section" class="comment-section">
-                    <!-- 既存のコメントを表示 -->
-                    <div class="comments-list mt-3">
-                        @foreach($post->comments as $comment)
-                            <div class="comment-item">
-                                <strong>{{ $comment->user->name }}:</strong> {{ $comment->text }}
+                    <!-- コメントセクション（最初は非表示） -->
+                    <div id="comment-section-{{ $post->id }}" class="comment-section">
+                        <!-- コメントフォーム -->
+                        <form action="{{ route('comment.store', $post) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <textarea name="content" class="form-control" rows="3" placeholder="コメントを追加"></textarea>
                             </div>
-                        @endforeach
+                            <button type="submit" class="btn btn-primary">コメントを投稿</button>
+                        </form>
+
+                        <!-- 既存のコメントを表示 -->
+                        <div class="comments-list mt-3">
+                            @foreach($post->comments as $comment)
+                                <div class="comment-item">
+                                    <strong>{{ $comment->user->name }}:</strong> {{ $comment->text }}
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
+
+        <!-- フッター -->
+        <footer class="footer">
+            <div class="container">
+                <div class="d-flex justify-content-around">
+                    <a href="{{ url('/main') }}" class="footer-btn">
+                        <span class="material-icons-round">home</span>
+                    </a>
+                    <a href="{{ url('/post_episode') }}" class="footer-btn">
+                        <span class="material-icons-round">add_circle</span>
+                    </a>
+                    <a href="{{ url('/mypage') }}" class="footer-btn">
+                        <span class="material-icons-round">person</span>
+                    </a>
+                </div>
+            </div>
+        </footer>
     </div>
-
-    <!-- いいねしたユーザーを表示するモーダル -->
-    <div class="modal fade" id="likeModal" tabindex="-1" aria-labelledby="likeModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="likeModalLabel">この投稿に「いいね」したユーザー</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <ul class="list-group">
-                        @foreach($post->likes as $like)
-                            <li class="list-group-item">{{ $like->user->name }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 削除確認モーダル -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">投稿削除確認</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    本当にこの投稿を削除しますか？
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-                    <form action="{{ url('/post_delete', $post->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">削除</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- フッター -->
-    <footer class="bg-light py-3 mt-auto fixed-bottom">
-        <div class="container">
-            <div class="d-flex justify-content-around">
-                <!-- ホームアイコン -->
-                <a href="{{ url('/main') }}" class="footer-btn text-decoration-none">
-                    <span class="material-icons-round">home</span>
-                </a>
-                <!-- 投稿アイコン -->
-                <a href="{{ url('/post_episode') }}" class="footer-btn text-decoration-none">
-                    <span class="material-icons-round">add_circle</span>
-                </a>
-                <!-- マイページアイコン -->
-                <a href="{{ url('/mypage') }}" class="footer-btn text-decoration-none">
-                    <span class="material-icons-round">person</span>
-                </a>
-            </div>
-        </div>
-    </footer>
 
     <!-- BootstrapのJSとアイコン -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function toggleCommentSection() {
-            var section = document.getElementById('comment-section');
+        function toggleCommentSection(postId) {
+            var section = document.getElementById('comment-section-' + postId);
             if (section.style.display === 'none' || section.style.display === '') {
                 section.style.display = 'block';  // コメントセクションを表示
             } else {
@@ -222,6 +226,6 @@
             }
         }
     </script>
-</body>
 
+</body>
 </html>

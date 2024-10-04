@@ -119,7 +119,8 @@ button {
         <!-- 投稿の詳細ページ -->
 <div class="card center-card">
     <div class="card-body">
-    <p><strong>{{ $post->user->name }}</strong></p> 
+    <p><strong><a href="{{ url('/user_page', $post->user->id) }}">{{ $post->user->name }}</a></strong></p>
+
         <h3>{{ $post->title }}</h3>
         <p>{{ $post->episode }}</p>
         <p class="text-muted">{{ $post->created_at->format('Y/m/d') }}</p>
@@ -127,10 +128,10 @@ button {
 
         <!-- 画像があれば表示 -->
         @if ($post->image)
-            <div class="mb-3">
-                <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid" alt="投稿画像">
-            </div>
-        @endif
+    <div class="mb-3">
+        <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid" style="max-width: 100%; height: auto;" alt="投稿画像">
+    </div>
+@endif
 
        <!-- いいね機能 -->
        <div class="like-comment mt-3">
@@ -179,22 +180,23 @@ button {
 
     </div>
 
-    <!-- フッター -->
-    <footer class="bg-light py-3 mt-auto fixed-bottom">
-        <div class="container">
-        <div class="d-flex justify-content-around">
-            <a href="{{ url('/main') }}" class="footer-btn">
-                <span class="material-icons-round">home</span>
-            </a>
-            <a href="{{ url('/post_episode') }}" class="footer-btn">
-                <span class="material-icons-round">add_circle</span>
-            </a>
-            <a href="{{ url('/mypage') }}" class="footer-btn">
-                <span class="material-icons-round">person</span>
-            </a>
-        </div>
-        </div>
-    </footer>
+     <!-- フッター -->
+     <footer class="footer">
+            <div class="container">
+                <div class="d-flex justify-content-around">
+                    <a href="{{ url('/main') }}" class="footer-btn">
+                        <span class="material-icons-round">home</span>
+                    </a>
+                    <a href="{{ url('/post_episode') }}" class="footer-btn">
+                        <span class="material-icons-round">add_circle</span>
+                    </a>
+                    <a href="{{ url('/mypage') }}" class="footer-btn">
+                        <span class="material-icons-round">person</span>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <!-- BootstrapのJSとアイコン -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
