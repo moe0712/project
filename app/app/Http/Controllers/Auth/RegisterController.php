@@ -8,6 +8,8 @@ use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request; 
+
 
 class RegisterController extends Controller
 {
@@ -40,6 +42,27 @@ class RegisterController extends Controller
     {
         $this->middleware('guest');
     }
+    public function showRegistrationForm()
+    {
+        
+        // dd('Method is called');
+        return view('auth.signup');  // ここで 'signup.blade.php' を呼び出す
+    }
+
+    public function showConfirmation(Request $request)
+{
+    
+    // バリデーション処理
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+    ]);
+    $request->session()->put('register_data', $validatedData);
+    
+    // 確認画面にデータを渡す
+    return view('auth.signup_confirm', ['data' => $validatedData]);
+}
 
     /**
      * Get a validator for an incoming registration request.
@@ -54,7 +77,11 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+
+        
+       
     }
+    
 
     /**
      * Create a new user instance after a valid registration.
@@ -68,6 +95,9 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            
         ]);
     }
+
+    
 }

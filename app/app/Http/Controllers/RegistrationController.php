@@ -229,7 +229,7 @@ public function likedPosts()
 
 
 
-// app/Http/Controllers/PostController.php
+
 public function search(Request $request)
 {
     // ユーザー検索
@@ -314,10 +314,11 @@ public function store(Request $request)
 {
     // セッションからデータを取得
     $data = $request->session()->get('register_data');
-
+    
     // ユーザーを作成
     $user = User::create([
         'name' => $data['name'],
+        
         'email' => $data['email'],
         'password' => Hash::make($data['password']),
     ]);

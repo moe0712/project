@@ -9,7 +9,7 @@
 
                 <div class="card-body">
                     <!-- フォームの開始タグ -->
-                    <form method="POST" action="{{ route('register.confirm') }}">
+                    <form method="POST" action="{{ route('signup.confirm') }}">
                         @csrf
 
                         <!-- 名前入力フィールド -->

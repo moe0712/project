@@ -1,9 +1,41 @@
 <?php
 use App\Http\Controllers\DisplayController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\AdminController;
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use App\Http\Controllers\ForgotPasswordController;
+
+
+
+
+
 
 // Laravelの認証ルート
 Auth::routes();
+
+
+// 新規登録画面のルート
+Route::get('/signup', [RegisterController::class, 'showRegistrationForm'])->name('signup');
+
+Route::post('/signup/confirm', [RegisterController::class, 'showConfirmation'])->name('signup.confirm');
+Route::post('/signup/store', [RegisterController::class, 'store'])->name('signup.store');
+
+// 管理者専用ページ
+Route::get('/ownerpage', function () {
+    return view('ownerpage');  // 管理者専用ページ
+})->middleware(['auth', 'admin']);  // 'auth' と 'admin' ミドルウェアを適用
+
+// 報告件数が多いユーザーを取得するルート
+Route::get('/admin/reported-users', [AdminController::class, 'getReportedUsers'])->name('admin.getReportedUsers');
+
+
+
+// パスワードリセットリンク要求フォーム
+Route::get('password/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+Route::get('password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+
 
 // メインページのルート
 Route::get('/', [DisplayController::class, 'index'])->middleware('auth');  // 認証が必要なメインページ

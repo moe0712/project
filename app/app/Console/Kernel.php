@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
         //
     ];
 
+    
+
     /**
      * Define the application's command schedule.
      *
@@ -39,4 +41,12 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    protected $routeMiddleware = [
+        // 既存のミドルウェア
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        // 管理者ミドルウェアを追加
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+    ];
+    
 }

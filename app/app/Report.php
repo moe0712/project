@@ -10,4 +10,17 @@ class Report extends Model
     protected $fillable = [
         'user_id', 'post_id', 'reason_type',
     ];
+
+    // ユーザーとのリレーション
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // 投稿とのリレーション
+    public function post()
+    {
+        return $this->belongsTo(Post::class);
+    }
 }
+
