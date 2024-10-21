@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Hash; // Hashクラスのインポート
 
 
 
+
 class RegistrationController extends Controller
 {
     
@@ -92,19 +93,19 @@ return view('mypage', compact('user', 'posts'));
         return redirect()->route('mypage')->with('success', 'ユーザー情報が更新されました。');
     }
 
-    public function showPost($id)
-{
-    // 指定されたIDの投稿を取得
-    $post = Post::find($id);
+        public function showPost($id)
+    {
+        // 指定されたIDの投稿を取得
+        $post = Post::find($id);
 
-    // もし投稿が見つからない場合は404エラーページを表示
-    if (!$post) {
-        abort(404, '投稿が見つかりません');
+        // もし投稿が見つからない場合は404エラーページを表示
+        if (!$post) {
+            abort(404, '投稿が見つかりません');
+        }
+
+        // 投稿詳細ページへ渡す
+        return view('my_post', compact('post'));
     }
-
-    // 投稿詳細ページへ渡す
-    return view('my_post', compact('post'));
-}
 
 public function showPostDetail($id)
 {

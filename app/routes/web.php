@@ -15,6 +15,22 @@ use App\Http\Controllers\ForgotPasswordController;
 Auth::routes();
 
 
+Route::get('/password/reset/complete', function () {
+    return view('auth.passwords.pwd_comp'); 
+})->name('password.reset.complete');
+
+// パスワードリセットリンクをリクエストするフォームの表示
+Route::get('password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+
+// パスワードリセットフォームの表示（トークン付き）
+Route::get('password/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+// パスワードをリセットする処理
+Route::post('password/reset', [App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
+
+
+
+
 // 新規登録画面のルート
 Route::get('/signup', [RegisterController::class, 'showRegistrationForm'])->name('signup');
 
@@ -31,10 +47,7 @@ Route::get('/admin/reported-users', [AdminController::class, 'getReportedUsers']
 
 
 
-// パスワードリセットリンク要求フォーム
-Route::get('password/reset/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 
-Route::get('password/reset', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 
 
 // メインページのルート
